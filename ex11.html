@@ -7,10 +7,14 @@
 </head>
 <body>
     <script>
-        let contador = 10;
-        while (contador > 0) {
-            console.log(`T - ${contador}s`);
-            contador -= 1;
+        let pessoa = {
+            nome: 'Daniel',
+            idade: 23,
+            cidade: 'brasilia'
+        }
+
+        for (let item in pessoa) {
+            console.log(item);
         }
     </script>
 </body>
