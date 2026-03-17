@@ -6,6 +6,18 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <script>
+        let carro = {
+            marca: 'Fiat',
+            modelo: 'Palio',
+            ano: 2014
+        }
+
+        carro.descricao = function() {
+            console.log(`Marca: ${carro.marca}, Modelo: ${carro.modelo}, Ano: ${carro.ano}`);
+        }
+        
+        carro.descricao();
+    </script>
 </body>
 </html>
