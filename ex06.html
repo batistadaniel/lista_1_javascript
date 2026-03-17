@@ -6,14 +6,27 @@
     <title>Document</title>
 </head>
 <body>
+    <form>
+        <label for="numero">Digite um numero inteiro: </label>
+        <input type="text" id="numero">
+        <button id="botao">Enviar</button>
+    </form>
+    <p id="resultado"></p>
     <script>
-        let numero = parseInt(prompt('Digite um numero inteiro: '));
+        const campoResultado = document.getElementById('resultado');
+        const botao = document.getElementById('botao');
+    
+        botao.addEventListener('click', (e) => {
+            e.preventDefault();
 
-        if (numero % 2 == 0) {
-            console.log(`O numero ${numero} e par!`);
-        } else {
-            console.log(`O numero ${numero} e impar!`);
-        }
+            const numero = document.getElementById('numero').value;
+            
+            if (numero % 2 == 0) {
+                campoResultado.innerText = `O numero ${numero} e par!`;
+            } else {
+                campoResultado.innerText = `O numero ${numero} e impar!`;
+            }
+        });
     </script>
 </body>
 </html>

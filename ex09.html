@@ -6,12 +6,27 @@
     <title>Document</title>
 </head>
 <body>
+    <form>
+        <label for="numero">Digite um numero inteiro: </label>
+        <input type="text" id="numero">
+        <button id="botao">Enviar</button>
+    </form>
+    <p id="resultado"></p>
     <script>
-        let num = parseInt(prompt("Digite um número:"));
-        console.log(`Tabuada de ${num}!`);
-        for (let i = 1; i <= 10; i++) {
-            console.log(`${num} x ${i} = ${num * i}`);
-        }
+        const campoResultado = document.getElementById('resultado');
+        const botao = document.getElementById('botao');
+
+        
+        botao.addEventListener('click', (e) => {
+            e.preventDefault();
+            const numero = document.getElementById('numero').value;            
+            campoResultado.innerText = `Tabuada de ${numero}!\n\n`;
+            
+            for (let i = 1; i <= 10; i++) {
+                // para nao apagar o valor anterior e necessario colocar essa bagaça de += com um \n 🤬🤬
+                campoResultado.innerText += `${numero} x ${i} = ${numero * i}\n`;
+            }
+        }); 
     </script>
 </body>
 </html>

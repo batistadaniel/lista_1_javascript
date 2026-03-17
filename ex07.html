@@ -6,16 +6,29 @@
     <title>Document</title>
 </head>
 <body>
+    <form>
+        <label for="nota">Digite a nota de 0 a 10 do aluno: </label>
+        <input type="text" id="nota">
+        <button id="botao">Enviar</button>
+    </form>
+    <p id="resultado"></p>
     <script>
-        let nota = parseInt(prompt('Digite a nota de 0 a 10 do aluno: '));
+        const campoResultado = document.getElementById('resultado');
+        const botao = document.getElementById('botao');
+    
+        botao.addEventListener('click', (e) => {
+            e.preventDefault();
 
-        if (nota >= 7) {
-            console.log(`Aprovado`);
-        } else if ((nota >= 5) && (nota < 7)) {
-            console.log(`Recuperação`);
-        } else {
-            console.log(`Reprovado`);
-        }
+            const nota = document.getElementById('nota').value;
+            
+            if (nota >= 7) {
+                campoResultado.innerText = `Aprovado`;
+            } else if ((nota >= 5) && (nota < 7)) {
+                campoResultado.innerText = `Recuperação`;
+            } else {
+                campoResultado.innerText = `Reprovado`;
+            }
+        });
     </script>
 </body>
 </html>

@@ -6,16 +6,27 @@
     <title>Document</title>
 </head>
 <body>
+    <form>
+        <label for="idade">Digite sua idade:</label>
+        <input type="text" id="idade">
+        <button id="botao">Enviar</button>
+    </form>
+    <p id="resultado"></p>
     <script>
-        let idade = parseInt(prompt('Digite sua idade: '));
-
-        if (idade <= 12) {
-            console.log(`Idade menor que 12 é crianca!`);
-        } else if (idade < 18) {
-            console.log(`Idade entre 12 e 17 é adolescente!`);
-        } else {
-            console.log(`Idade maior que 18 é adulto!`);
-        }
+        const campoResultado = document.getElementById('resultado');
+        const botao = document.getElementById('botao');
+        
+        botao.addEventListener('click', (e) => {
+            e.preventDefault();
+            const idade = parseInt(document.getElementById('idade').value);
+            if (idade <= 12) {
+                campoResultado.innerText = `Idade menor que 12 é crianca!`;
+            } else if (idade < 18) {
+                campoResultado.innerText = `Idade entre 12 e 17 é adolescente!`;
+            } else {
+                campoResultado.innerText = `Idade maior que 18 é adulto!`;
+            }
+        })
     </script>
 </body>
 </html>

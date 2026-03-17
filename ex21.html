@@ -6,6 +6,121 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <form>
+        <label for="nome">Digite o nome: </label>
+        <input type="text" id="nome">
+        <button id="botao">Entrar na fila</button>
+    </form>
+    <div id="atender"></div>
+    <p id="resultado"></p>
+    <div id="atendidos"></div>
+    <script>
+        const campoResultado = document.getElementById('resultado');
+        const atender = document.getElementById('atender');
+        const campoAtendidos = document.getElementById('atendidos');
+        const botao = document.getElementById('botao');
+        const inputNome = document.getElementById('nome');
+
+        const listaNomes = [];
+        const atendidos = [];
+
+        
+        botao.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            const agora = new Date();
+
+            const horas = agora.getHours();
+            const minutos = agora.getMinutes();
+            const segundos = agora.getSeconds();
+            const dia = agora.getDate();
+            const mes = agora.getMonth() + 1;
+            const ano = agora.getFullYear();
+
+            const dataEntrada = `${horas}:${minutos}:${segundos} - ${dia}/${mes}/${ano}`;
+
+            const nome = inputNome.value; // pega o nome
+
+            if (nome === "") return; // pra nao pegar vazio
+
+            listaNomes.push({
+                nome: nome,
+                entrada: agora,
+                dataEntrada: dataEntrada
+            }); // adiciona a lista
+
+            inputNome.value = ""; // limpa o campo do formulario
+
+            atender.innerHTML = `<br><button>Atender</button>`
+
+            renderFila();
+
+        }); 
+
+        atender.addEventListener('click', () => {
+            if (listaNomes.length === 0) return;
+
+            const agora = new Date();
+
+            const horas = agora.getHours();
+            const minutos = agora.getMinutes();
+            const segundos = agora.getSeconds();
+            const dia = agora.getDate();
+            const mes = agora.getMonth() + 1;
+            const ano = agora.getFullYear();
+
+            const dataAtendido = `${horas}:${minutos}:${segundos} - ${dia}/${mes}/${ano}`;
+
+            const atendido = listaNomes.shift();
+
+            // tempo em milissegundos
+            const tempoMs = agora - atendido.entrada;
+
+            // converter pra segundos
+            const totalSegundos = Math.floor(tempoMs / 1000);
+
+            const h = Math.floor(totalSegundos / 3600);
+            const m = Math.floor((totalSegundos % 3600) / 60);
+            const s = totalSegundos % 60;
+
+            // formata com zero a esquerda
+            const tempoFormatado = 
+                String(h).padStart(2, '0') + ":" +
+                String(m).padStart(2, '0') + ":" +
+                String(s).padStart(2, '0');
+
+            atendidos.push({
+                nome: atendido.nome,
+                dataEntrada: atendido.dataEntrada,
+                dataAtendido: dataAtendido,
+                tempo: tempoFormatado
+            });
+
+            renderFila();
+            renderAtendidos();
+        });
+
+
+        // funcoes para nao repetir toda hora a mesma coisa
+        function renderFila() {
+            campoResultado.innerHTML = "";
+
+            for (let i = 0; i < listaNomes.length; i++) {
+                campoResultado.innerHTML += `
+                    ${listaNomes[i].nome} | Entrou às ${listaNomes[i].dataEntrada}<br>
+                `;
+            }
+        }
+
+        function renderAtendidos() {
+            campoAtendidos.innerHTML = "<h3>Atendidos:</h3>";
+
+            for (let i = 0; i < atendidos.length; i++) {
+                campoAtendidos.innerHTML += `
+                    ${atendidos[i].nome} | Entrada: ${atendidos[i].dataEntrada} | Saída: ${atendidos[i].dataAtendido} | Tempo: ${atendidos[i].tempo}<br>
+                `;
+            }
+        }
+    </script>
 </body>
 </html>
