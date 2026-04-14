@@ -1,126 +1,132 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
 <body>
-    <form>
+    <!-- form de envio -->
+    <form id="form">
         <label for="nome">Digite o nome: </label>
         <input type="text" id="nome">
         <button id="botao">Entrar na fila</button>
     </form>
+
+    <!-- resultados -->
     <div id="atender"></div>
     <p id="resultado"></p>
     <div id="atendidos"></div>
+
     <script>
+
+        // pegando os campos com id
         const campoResultado = document.getElementById('resultado');
         const atender = document.getElementById('atender');
         const campoAtendidos = document.getElementById('atendidos');
         const botao = document.getElementById('botao');
+        const form = document.getElementById('form');
         const inputNome = document.getElementById('nome');
 
+        // lista de dados
         const listaNomes = [];
         const atendidos = [];
 
-        
-        botao.addEventListener('click', (e) => {
+        // formata esse trem todo ai
+        const formatador = new Intl.DateTimeFormat('pt-BR', {
+            weekday: 'long',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        // quando formulario for enviado
+        form.addEventListener("submit", (e) => {
+            // evitar atualizar
             e.preventDefault();
 
-            const agora = new Date();
+            // pega a data e hora num formata que inicia nos anos 1970
+            const entrada = Date.now();
 
-            const horas = agora.getHours();
-            const minutos = agora.getMinutes();
-            const segundos = agora.getSeconds();
-            const dia = agora.getDate();
-            const mes = agora.getMonth() + 1;
-            const ano = agora.getFullYear();
+            const dataEntrada =  formatador.format(entrada);
 
-            const dataEntrada = `${horas}:${minutos}:${segundos} - ${dia}/${mes}/${ano}`;
-
-            const nome = inputNome.value; // pega o nome
-
-            if (nome === "") return; // pra nao pegar vazio
+            // pega o nome
+            const nome = inputNome.value; 
+            
+            // para nao pegar nome vazio
+            if (nome === "") return;
 
             listaNomes.push({
                 nome: nome,
-                entrada: agora,
-                dataEntrada: dataEntrada
+                dataEntrada: dataEntrada,
+                entradaTimestamp: entrada
             }); // adiciona a lista
 
-            inputNome.value = ""; // limpa o campo do formulario
+            // limpa o campo do formulario
+            inputNome.value = ""; 
 
+            // insere o botao de atenter
             atender.innerHTML = `<br><button>Atender</button>`
 
-            renderFila();
+            // limpa o campo do resultado
+            campoResultado.innerHTML = "";
 
-        }); 
+            // mostra a lista de quem entrou na fila
+            for (let i = 0; i < listaNomes.length; i++) {
+                campoResultado.innerHTML += `
+                    <!-- formata o nome completo bonitinho   -->
+                    ${listaNomes[i].nome.toLowerCase().split(' ').map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1)).join(' ')} | Entrou na fila ${listaNomes[i].dataEntrada}<br>
+                `;
+            }
+            
+        })
 
         atender.addEventListener('click', () => {
             if (listaNomes.length === 0) return;
 
-            const agora = new Date();
+            const saida = Date.now();
 
-            const horas = agora.getHours();
-            const minutos = agora.getMinutes();
-            const segundos = agora.getSeconds();
-            const dia = agora.getDate();
-            const mes = agora.getMonth() + 1;
-            const ano = agora.getFullYear();
+            const dataSaida =  formatador.format(saida);
+            
 
-            const dataAtendido = `${horas}:${minutos}:${segundos} - ${dia}/${mes}/${ano}`;
+            const atendido = listaNomes.shift() 
 
-            const atendido = listaNomes.shift();
+            const tempoNaFila = saida - atendido.entradaTimestamp;
 
-            // tempo em milissegundos
-            const tempoMs = agora - atendido.entrada;
-
-            // converter pra segundos
-            const totalSegundos = Math.floor(tempoMs / 1000);
-
-            const h = Math.floor(totalSegundos / 3600);
-            const m = Math.floor((totalSegundos % 3600) / 60);
-            const s = totalSegundos % 60;
-
-            // formata com zero a esquerda
-            const tempoFormatado = 
-                String(h).padStart(2, '0') + ":" +
-                String(m).padStart(2, '0') + ":" +
-                String(s).padStart(2, '0');
-
+            const horas = Math.floor(tempoNaFila / 3600000);
+            const segundos = Math.floor((tempoNaFila % 60000) / 1000);
+            const minutos = Math.floor((tempoNaFila % 3600000) / 60000);
+            
             atendidos.push({
                 nome: atendido.nome,
-                dataEntrada: atendido.dataEntrada,
-                dataAtendido: dataAtendido,
-                tempo: tempoFormatado
+                entrada: atendido.dataEntrada,
+                saida: dataSaida,
+                tempo: `${horas}h ${minutos}m ${segundos}s`
             });
+            
 
-            renderFila();
-            renderAtendidos();
-        });
-
-
-        // funcoes para nao repetir toda hora a mesma coisa
-        function renderFila() {
+            // limpa antes de redesenhar
             campoResultado.innerHTML = "";
 
+            // mostra a lista de quem entrou na fila
             for (let i = 0; i < listaNomes.length; i++) {
                 campoResultado.innerHTML += `
-                    ${listaNomes[i].nome} | Entrou às ${listaNomes[i].dataEntrada}<br>
+                    <!-- formata o nome completo bonitinho   -->
+                    ${listaNomes[i].nome.toLowerCase().split(' ').map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1)).join(' ')} | Entrou na fila ${listaNomes[i].dataEntrada}<br>
                 `;
             }
-        }
+            campoAtendidos.innerHTML = `<br><button>Atendidos</button><br><br>`;
 
-        function renderAtendidos() {
-            campoAtendidos.innerHTML = "<h3>Atendidos:</h3>";
-
+            // mostra a lista de quem foi atendido
             for (let i = 0; i < atendidos.length; i++) {
                 campoAtendidos.innerHTML += `
-                    ${atendidos[i].nome} | Entrada: ${atendidos[i].dataEntrada} | Saída: ${atendidos[i].dataAtendido} | Tempo: ${atendidos[i].tempo}<br>
+                    <!-- formata o nome completo bonitinho   -->
+                    ${atendidos[i].nome.toLowerCase().split(' ').map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1)).join(' ')} | Foi atendido(a) ${atendidos[i].saida} | Esperou ${atendidos[i].tempo}<br>
                 `;
             }
-        }
+        });
     </script>
 </body>
 </html>
